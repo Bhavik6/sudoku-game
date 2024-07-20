@@ -51,7 +51,7 @@ const SudokuBoard = ({ difficulty }) => {
 
   return (
     <div className="flex flex-col items-center">
-      <div className="grid grid-cols-9 gap-0 w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl bg-gray-100 shadow-md rounded-lg">
+      <div className="grid grid-cols-9 gap-1 w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl bg-gray-100 shadow-md rounded-lg p-2">
         {board.map((row, rowIndex) =>
           row.map((cell, colIndex) => (
             <input
