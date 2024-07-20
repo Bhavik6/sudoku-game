@@ -7,6 +7,7 @@ const SudokuBoard = ({ difficulty }) => {
   const [board, setBoard] = useState(generateBoard(difficulty));
   const [isValid, setIsValid] = useState(true);
   const [invalidCells, setInvalidCells] = useState([]);
+  const [nonNumericCells, setNonNumericCells] = useState([]);
 
   useEffect(() => {
     setBoard(generateBoard(difficulty));
@@ -14,9 +15,9 @@ const SudokuBoard = ({ difficulty }) => {
 
   useEffect(() => {
     const { valid, invalidCells } = validateBoard(board);
-    setIsValid(valid);
+    setIsValid(valid && nonNumericCells.length === 0);
     setInvalidCells(invalidCells);
-  }, [board]);
+  }, [board, nonNumericCells]);
 
   const handleChange = (row, col, value) => {
     const newBoard = board.map((r, rowIndex) =>
@@ -27,10 +28,25 @@ const SudokuBoard = ({ difficulty }) => {
       )
     );
     setBoard(newBoard);
+
+    const nonNumeric = [];
+    newBoard.forEach((r, rowIndex) => {
+      r.forEach((cell, colIndex) => {
+        if (cell.value && !/^[1-9]$/.test(cell.value)) {
+          nonNumeric.push({ row: rowIndex, col: colIndex });
+        }
+      });
+    });
+
+    setNonNumericCells(nonNumeric);
   };
 
   const isInvalidCell = (rowIndex, colIndex) => {
     return invalidCells.some(cell => cell.row === rowIndex && cell.col === colIndex);
+  };
+
+  const isNonNumericCell = (rowIndex, colIndex) => {
+    return nonNumericCells.some(cell => cell.row === rowIndex && cell.col === colIndex);
   };
 
   return (
@@ -44,7 +60,7 @@ const SudokuBoard = ({ difficulty }) => {
               maxLength="1"
               value={cell.value}
               onChange={(e) => handleChange(rowIndex, colIndex, e.target.value)}
-              className={"w-12 h-12 text-center border border-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 rounded text-slate-950 " + (cell.isPreFilled ? "bg-slate-200 " : "bg-white ") + (isInvalidCell(rowIndex, colIndex) ? 'bg-red-200' : '')}
+              className={"w-12 h-12 text-center border border-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 rounded text-slate-950 " + (isInvalidCell(rowIndex, colIndex) ? 'bg-red-200' : '') + (isNonNumericCell(rowIndex, colIndex) ? 'bg-yellow-200' : '')}
               disabled={cell.isPreFilled}
             />
           ))
@@ -153,7 +169,7 @@ const validateBoard = (board) => {
     }
   }
 
-  return { valid: invalidCells.length === 0, invalidCells };
+  return { valid: (invalidCells.length === 0), invalidCells };
 };
 
 export default SudokuBoard;
