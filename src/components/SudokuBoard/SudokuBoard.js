@@ -51,7 +51,7 @@ const SudokuBoard = ({ difficulty }) => {
 
   return (
     <div className="flex flex-col items-center">
-      <div className="grid grid-cols-9 gap-1 p-4 bg-gray-100 shadow-md rounded-lg">
+      <div className="grid grid-cols-9 gap-0 w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl bg-gray-100 shadow-md rounded-lg">
         {board.map((row, rowIndex) =>
           row.map((cell, colIndex) => (
             <input
@@ -60,7 +60,7 @@ const SudokuBoard = ({ difficulty }) => {
               maxLength="1"
               value={cell.value}
               onChange={(e) => handleChange(rowIndex, colIndex, e.target.value)}
-              className={"w-12 h-12 text-center border border-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 rounded text-slate-950 " + (isInvalidCell(rowIndex, colIndex) ? 'bg-red-200' : '') + (isNonNumericCell(rowIndex, colIndex) ? 'bg-yellow-200' : '')}
+              className={"w-10 h-10 text-center border border-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 rounded text-slate-950 " + (isInvalidCell(rowIndex, colIndex) ? 'bg-red-200' : '') + (isNonNumericCell(rowIndex, colIndex) ? 'bg-yellow-200' : '')}
               disabled={cell.isPreFilled}
             />
           ))
