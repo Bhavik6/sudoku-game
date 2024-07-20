@@ -20,7 +20,7 @@ const Game = () => {
           id="difficulty"
           value={difficulty}
           onChange={handleDifficultyChange}
-          className="border border-gray-400 rounded p-1"
+          className="select select-bordered max-w-xs"
         >
           <option value="easy">Easy</option>
           <option value="medium">Medium</option>
