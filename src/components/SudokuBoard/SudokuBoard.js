@@ -7,7 +7,7 @@ const SudokuBoard = ({ difficulty }) => {
   const [board, setBoard] = useState(generateBoard(difficulty));
   const [isValid, setIsValid] = useState(true);
   const [invalidCells, setInvalidCells] = useState([]);
-  const [nonNumericCells, setNonNumericCells] = useState([]);
+  const [selectedCell, setSelectedCell] = useState(null);
 
   useEffect(() => {
     setBoard(generateBoard(difficulty));
@@ -15,11 +15,14 @@ const SudokuBoard = ({ difficulty }) => {
 
   useEffect(() => {
     const { valid, invalidCells } = validateBoard(board);
-    setIsValid(valid && nonNumericCells.length === 0);
+    setIsValid(valid);
     setInvalidCells(invalidCells);
-  }, [board, nonNumericCells]);
+  }, [board]);
 
   const handleChange = (row, col, value) => {
+
+    if (!/^[1-9]?$/.test(value)) return;
+
     const newBoard = board.map((r, rowIndex) =>
       r.map((cell, colIndex) =>
         rowIndex === row && colIndex === col
@@ -28,25 +31,25 @@ const SudokuBoard = ({ difficulty }) => {
       )
     );
     setBoard(newBoard);
+  };
 
-    const nonNumeric = [];
-    newBoard.forEach((r, rowIndex) => {
-      r.forEach((cell, colIndex) => {
-        if (cell.value && !/^[1-9]$/.test(cell.value)) {
-          nonNumeric.push({ row: rowIndex, col: colIndex });
-        }
-      });
-    });
-
-    setNonNumericCells(nonNumeric);
+  const handleCellClick = (row, col) => {
+    setSelectedCell({ row, col });
   };
 
   const isInvalidCell = (rowIndex, colIndex) => {
     return invalidCells.some(cell => cell.row === rowIndex && cell.col === colIndex);
   };
 
-  const isNonNumericCell = (rowIndex, colIndex) => {
-    return nonNumericCells.some(cell => cell.row === rowIndex && cell.col === colIndex);
+  const isHighlighted = (rowIndex, colIndex) => {
+    if (!selectedCell || isInvalidCell(rowIndex, colIndex)) return false;
+
+    const { row, col } = selectedCell;
+    const sameRow = rowIndex === row;
+    const sameCol = colIndex === col;
+    const sameGrid = Math.floor(row / 3) === Math.floor(rowIndex / 3) && Math.floor(col / 3) === Math.floor(colIndex / 3);
+
+    return sameRow || sameCol || sameGrid;
   };
 
   return (
@@ -60,7 +63,8 @@ const SudokuBoard = ({ difficulty }) => {
               maxLength="1"
               value={cell.value}
               onChange={(e) => handleChange(rowIndex, colIndex, e.target.value)}
-              className={"w-10 h-10 text-center border border-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 rounded text-slate-950 " + (isInvalidCell(rowIndex, colIndex) ? 'bg-red-200' : '') + (isNonNumericCell(rowIndex, colIndex) ? 'bg-yellow-200' : '')}
+              onClick={() => handleCellClick(rowIndex, colIndex)}
+              className={"w-10 h-10 text-center border border-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 rounded text-slate-950 " + (isInvalidCell(rowIndex, colIndex) ? 'bg-red-200 ' : '') + (isHighlighted(rowIndex, colIndex) ? 'bg-blue-100 ' : '')}
               disabled={cell.isPreFilled}
             />
           ))
