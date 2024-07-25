@@ -33,15 +33,15 @@ const SudokuBoard = ({ difficulty }) => {
     setBoard(newBoard);
   };
 
-  const handleCellClick = (row, col) => {
-    setSelectedCell({ row, col });
+  const handleCellClick = (row, col, value) => {
+    setSelectedCell({ row, col, value });
   };
 
   const isInvalidCell = (rowIndex, colIndex) => {
     return invalidCells.some(cell => cell.row === rowIndex && cell.col === colIndex);
   };
 
-  const isHighlighted = (rowIndex, colIndex) => {
+  const isHighlighted = (rowIndex, colIndex, value) => {
     if (!selectedCell || isInvalidCell(rowIndex, colIndex)) return false;
 
     const { row, col } = selectedCell;
@@ -49,7 +49,7 @@ const SudokuBoard = ({ difficulty }) => {
     const sameCol = colIndex === col;
     const sameGrid = Math.floor(row / 3) === Math.floor(rowIndex / 3) && Math.floor(col / 3) === Math.floor(colIndex / 3);
 
-    return sameRow || sameCol || sameGrid;
+    return sameRow || sameCol || sameGrid || (value !== '' && value === selectedCell.value);
   };
 
   return (
@@ -63,9 +63,9 @@ const SudokuBoard = ({ difficulty }) => {
               maxLength="1"
               value={cell.value}
               onChange={(e) => handleChange(rowIndex, colIndex, e.target.value)}
-              onClick={() => handleCellClick(rowIndex, colIndex)}
-              className={"w-10 h-10 text-center border border-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 rounded text-slate-950 " + (isInvalidCell(rowIndex, colIndex) ? 'bg-red-200 ' : '') + (isHighlighted(rowIndex, colIndex) ? 'bg-blue-100 ' : '')}
-              disabled={cell.isPreFilled}
+              onClick={() => handleCellClick(rowIndex, colIndex, cell.value)}
+              className={"w-10 h-10 text-center border border-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 rounded text-slate-950 " + (isInvalidCell(rowIndex, colIndex) ? 'bg-red-200 ' : '') + (isHighlighted(rowIndex, colIndex, cell.value) ? 'bg-blue-100 ' : '')}
+              readOnly={cell.isPreFilled}
             />
           ))
         )}
